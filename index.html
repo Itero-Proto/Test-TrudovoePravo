@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#007bff">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Тест: Юридическое лицо</title>
 
-  <!-- Подключаем внешний CSS -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- PWA -->
+  <link rel="manifest" href="/Test-Uridicheskoe_litso/manifest.json">
+  <meta name="theme-color" content="#007bff">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/Test-Uridicheskoe_litso/styles.css">
 </head>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js");
-  });
-}
-</script>
 
 <body>
 
@@ -37,7 +33,7 @@ if ("serviceWorker" in navigator) {
   </div>
 
 <script>
-// ---------------------- QUESTIONS ----------------------
+/* -------- QUESTIONS -------- */
 const questions = [
   { text: "Что такое юридическое лицо?", options: ["Физическое лицо, занимающееся предпринимательством", "Организация, имеющая самостоятельные права и обязанности", "Государственный орган"], correct: 1 },
   { text: "Какой из признаков относится к юридическому лицу?", options: ["Наличие личного имущества у учредителя", "Организационное единство", "Наличие трудового договора"], correct: 1 },
@@ -49,27 +45,27 @@ const questions = [
   { text: "Какие бывают основания ликвидации юридического лица?", options: ["Только добровольные", "Только по решению суда", "Добровольные и принудительные"], correct: 2 }
 ];
 
-// ---------------------- STATE ----------------------
+/* -------- STATE -------- */
 let examMode = false;
 let shuffled = [];
 let current = 0;
 let score = 0;
 let answerShown = false;
 
-// Fisher-Yates
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
+/* Shuffle array */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return array;
+  return arr;
 }
 
-document.getElementById('examModeToggle')
-  .addEventListener('change', e => { examMode = e.target.checked; });
+document.getElementById('examModeToggle').addEventListener('change', e => {
+  examMode = e.target.checked;
+});
 
-
-// ---------------------- START TEST ----------------------
+/* -------- START -------- */
 function startTest() {
   shuffled = shuffle([...questions]);
   current = 0;
@@ -78,8 +74,7 @@ function startTest() {
   loadQuestion();
 }
 
-
-// ---------------------- LOAD QUESTION ----------------------
+/* -------- LOAD QUESTION -------- */
 function loadQuestion() {
   const container = document.getElementById('quiz-container');
   const progress = document.getElementById('progress');
@@ -88,7 +83,6 @@ function loadQuestion() {
   progress.innerText = `Вопрос ${current + 1} из ${shuffled.length}`;
   const q = shuffled[current];
 
-  // перемешиваем варианты + сохраняем правильный индекс
   const opts = q.options.map((opt, i) => ({ opt, i }));
   shuffle(opts);
   q.shuffledOpts = opts;
@@ -97,7 +91,7 @@ function loadQuestion() {
   container.innerHTML = `
     <div class="card">
       <p><strong>${escapeHtml(q.text)}</strong></p>
-      ${q.shuffledOpts.map((o, i) => `
+      ${opts.map((o, i) => `
         <label style="display:block;line-height:1.5;margin:6px 0;">
           <input type="radio" name="q${current}" value="${i}">
           ${escapeHtml(o.opt)}
@@ -121,17 +115,16 @@ function loadQuestion() {
   answerShown = false;
 }
 
-
-// ---------------------- STUDY MODE ----------------------
+/* -------- STUDY MODE -------- */
 function showAnswer() {
   const q = shuffled[current];
   const selectedEl = document.querySelector(`input[name=q${current}]:checked`);
-  const answerBox = document.getElementById('answerBox');
-  const nextBtn = document.getElementById('nextBtn');
 
   if (!selectedEl) return alert('Выберите вариант ответа!');
 
   const selected = parseInt(selectedEl.value);
+  const answerBox = document.getElementById('answerBox');
+  const nextBtn = document.getElementById('nextBtn');
 
   if (selected === q.correctShuffled) score++;
 
@@ -140,8 +133,10 @@ function showAnswer() {
   if (selected === q.correctShuffled) {
     answerBox.innerHTML = '<span class="correct">Верно!</span>';
   } else {
-    answerBox.innerHTML =
-      `<span class="wrong">Неверно.</span><br>Правильный ответ: <strong>${escapeHtml(q.shuffledOpts[q.correctShuffled].opt)}</strong>`;
+    answerBox.innerHTML = `
+      <span class="wrong">Неверно.</span><br>
+      Правильный ответ: <strong>${escapeHtml(q.shuffledOpts[q.correctShuffled].opt)}</strong>
+    `;
   }
 
   nextBtn.innerText = (current + 1 === shuffled.length) ? 'Завершить' : 'Далее';
@@ -150,8 +145,7 @@ function showAnswer() {
   answerShown = true;
 }
 
-
-// ---------------------- EXAM MODE ----------------------
+/* -------- EXAM MODE -------- */
 function submitExamAnswer() {
   const q = shuffled[current];
   const selectedEl = document.querySelector(`input[name=q${current}]:checked`);
@@ -165,20 +159,15 @@ function submitExamAnswer() {
   nextQuestion();
 }
 
-
-// ---------------------- NEXT QUESTION ----------------------
+/* -------- NEXT -------- */
 function nextQuestion() {
   if (!answerShown) return;
-
   current++;
-
   if (current >= shuffled.length) return finish();
-
   loadQuestion();
 }
 
-
-// ---------------------- FINISH ----------------------
+/* -------- FINISH -------- */
 function finish() {
   const container = document.getElementById('quiz-container');
   const nextBtn = document.getElementById('nextBtn');
@@ -198,8 +187,7 @@ function finish() {
   nextBtn.onclick = startTest;
 }
 
-
-// ---------------------- SANITIZE ----------------------
+/* HTML escape */
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -207,6 +195,15 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+</script>
+
+<!-- Register service worker -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/Test-Uridicheskoe_litso/sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(err => console.error("SW registration failed", err));
 }
 </script>
 
