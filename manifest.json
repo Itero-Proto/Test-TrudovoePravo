@@ -1,8 +1,8 @@
 {
-  "name": "Тест по хозяйственному праву",
-  "short_name": "Юр. Лицо",
-  "start_url": "/Test-Uridicheskoe_litso/index.html",
-  "scope": "/Test-Uridicheskoe_litso/",
+  "name": "Тест по трудовому праву",
+  "short_name": "Трудовое право",
+  "start_url": "/Test-TrudovoePravo/index.html",
+  "scope": "/Test-TrudovoePravo/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
